@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://tluyqrclx8q5"]
+
+[ext_resource type="Script" uid="uid://ualfyqw5ywsv" path="res://Scripts/Global.cs" id="1_gv34k"]
+[ext_resource type="PackedScene" uid="uid://bnjp310661xbq" path="res://Scenes/Puck.tscn" id="1_n5fxg"]
+[ext_resource type="PackedScene" uid="uid://bpuay13o7hfj6" path="res://Scenes/arrow.tscn" id="2_tgp7m"]
+[ext_resource type="PackedScene" uid="uid://dh8oig16byb4c" path="res://Scenes/in_game_ui.tscn" id="3_tlm6c"]
+
+[node name="Node2D" type="Node2D" unique_id=1606075846 node_paths=PackedStringArray("puckScript", "arrow", "forceBar")]
+script = ExtResource("1_gv34k")
+puckScript = NodePath("Puck/CharacterBody2D")
+arrow = NodePath("Puck/Arrow")
+forceBar = NodePath("In-game-UI/HBoxContainer/ForceBar")
+
+[node name="Puck" parent="." unique_id=2076180181 instance=ExtResource("1_n5fxg")]
+position = Vector2(1013, 850)
+
+[node name="CharacterBody2D" parent="Puck" index="0" unique_id=229886003 node_paths=PackedStringArray("global")]
+global = NodePath("../..")
+
+[node name="Arrow" parent="Puck" unique_id=909023424 instance=ExtResource("2_tgp7m")]
+
+[node name="In-game-UI" parent="." unique_id=1290719452 instance=ExtResource("3_tlm6c")]
+offset_left = 1011.0
+offset_top = 1080.0
+offset_right = 1011.0
+offset_bottom = 1080.0
+
+[editable path="Puck"]
+[editable path="In-game-UI"]

@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://bpuay13o7hfj6"]
+
+[ext_resource type="Script" uid="uid://bp3ar5xwfteam" path="res://Scripts/Arrow.cs" id="1_h5x2m"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_2u0bd"]
+load_path = "res://.godot/imported/arrow-svgrepo-com.svg-d00f734d5053d1efc981cda34670ab2d.ctex"
+
+[node name="Arrow" type="Node2D" unique_id=909023424]
+script = ExtResource("1_h5x2m")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=931646353]
+z_index = 2
+z_as_relative = false
+scale = Vector2(0.185, 0.185)
+texture = SubResource("CompressedTexture2D_2u0bd")
+offset = Vector2(316, 0)
+region_enabled = true
+region_rect = Rect2(76.489136, 264.20496, 655.47754, 272.82043)

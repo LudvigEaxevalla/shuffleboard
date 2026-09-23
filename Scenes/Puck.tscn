@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bnjp310661xbq"]
+
+[ext_resource type="Texture2D" uid="uid://8s8t01al6la8" path="res://Assets/Sprites/wheel.svg" id="1_5ddw5"]
+[ext_resource type="Script" uid="uid://cisa5rql08ojw" path="res://Scripts/Puck/PuckScript.cs" id="1_kf2af"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gv34k"]
+bounce = 0.2
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ond42"]
+
+[node name="Puck" type="Node2D" unique_id=2076180181]
+
+[node name="CharacterBody2D" type="RigidBody2D" parent="." unique_id=229886003]
+input_pickable = true
+physics_material_override = SubResource("PhysicsMaterial_gv34k")
+gravity_scale = 0.0
+script = ExtResource("1_kf2af")
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=1673830266]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_5ddw5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=169472269]
+scale = Vector2(3.765, 3.765)
+shape = SubResource("CircleShape2D_ond42")

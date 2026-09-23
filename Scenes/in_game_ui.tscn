@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://dh8oig16byb4c"]
+
+[ext_resource type="Script" uid="uid://ceyoo700tdhvj" path="res://Scripts/ForceBar.cs" id="1_5x6se"]
+
+[node name="In-game-UI" type="Control" unique_id=1290719452]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1114701635]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ForceBar" type="ProgressBar" parent="HBoxContainer" unique_id=1161523220]
+modulate = Color(0.23814785, 0.55591923, 0.36863944, 1)
+custom_minimum_size = Vector2(500, 20)
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+value = 100.0
+show_percentage = false
+script = ExtResource("1_5x6se")
