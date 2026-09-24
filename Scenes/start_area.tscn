@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://418vqclmfahn"]
+
+[ext_resource type="Script" uid="uid://4djq0ex8yldg" path="res://Scripts/StartArea.cs" id="1_bgc5k"]
+[ext_resource type="Texture2D" uid="uid://4ewu5nply0r" path="res://Assets/Sprites/Ground/zone_placeholder.svg" id="1_o40am"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ond42"]
+size = Vector2(78, 83)
+
+[node name="StartArea" type="Area2D" unique_id=317594134]
+modulate = Color(1, 1, 1, 0.47058824)
+script = ExtResource("1_bgc5k")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=52614044]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_ond42")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2090464368]
+texture = ExtResource("1_o40am")

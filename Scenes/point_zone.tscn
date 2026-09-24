@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://doqhgjp35tf6t"]
+
+[ext_resource type="Texture2D" uid="uid://4ewu5nply0r" path="res://Assets/Sprites/Ground/zone_placeholder.svg" id="2_bhcx8"]
+[ext_resource type="Script" uid="uid://bctg827wlrrvy" path="res://Scripts/PointZoneScript.cs" id="2_uydxv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ond42"]
+size = Vector2(235, 213)
+
+[node name="Point Zone" type="Area2D" unique_id=1999023050]
+script = ExtResource("2_uydxv")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=808384396]
+position = Vector2(-1.5000067, -1.5)
+scale = Vector2(2.8100002, 2.6499999)
+texture = ExtResource("2_bhcx8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=778769825]
+position = Vector2(0.5, -4.5)
+shape = SubResource("RectangleShape2D_ond42")
+debug_color = Color(0.7917952, 0.36535203, 0.5860341, 0.41960785)

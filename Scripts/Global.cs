@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Drawing;
 
 public partial class Global : Node2D
 {
@@ -13,13 +14,16 @@ public partial class Global : Node2D
 	ForceBar forceBar;
 	Vector2 puckStartPosition;
 	public int pucks;
-	public int maxPucks = 10;
+	public int moves = 10;
 	public int pucksRemaining;
+	private StartArea selectedStartArea;
+	private Vector2 nextPuckPosition;
+	private bool hasSelectedPuckPosition;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		pucksRemaining = maxPucks;
+		pucksRemaining = moves;
 		puckStartPosition = puckScript.GlobalPosition;
 		arrow = GetNode<Arrow>("Puck/Arrow");
 		forceBar = GetNode<ForceBar>("In-game-UI/HBoxContainer/ForceBar");
@@ -32,9 +36,40 @@ public partial class Global : Node2D
 		pucksRemaining--;
 //		puckRemainingIndicator.UpdateLabel();
 		GD.Print("Puck stopped: " + pucks);
-		if (pucks < maxPucks)
+		if (pucks < moves)
 		{
 			AddNewPuck();
+		}
+	}
+
+	public void SelectStartArea(StartArea area)
+	{
+		if (selectedStartArea != null)
+			return;
+
+		selectedStartArea = area;
+		nextPuckPosition = area.GlobalPosition;
+		hasSelectedPuckPosition = true;
+		foreach (Node child in GetNode<Node2D>("Starting Areas").GetChildren())
+		{
+			if (child is StartArea startArea)
+				startArea.SetAvailable(startArea == area ? true : false);
+		}
+
+		var puckRoot = puckScript.GetParent<Node2D>();
+		puckRoot.GlobalPosition = area.GlobalPosition;
+		puckScript.LinearVelocity = Vector2.Zero;
+		puckScript.AngularVelocity = 0;
+		puckScript.Sleeping = true;
+	}
+
+	public void OnPuckReleased()
+	{
+		selectedStartArea = null;
+		foreach (Node child in GetNode<Node2D>("Starting Areas").GetChildren())
+		{
+			if (child is StartArea startArea)
+				startArea.SetAvailable(true);
 		}
 	}
 
@@ -42,7 +77,7 @@ public partial class Global : Node2D
 	{
 		var puck = puckScene.Instantiate<Node2D>();
 		AddChild(puck);
-		puck.GlobalPosition = puckStartPosition;
+		puck.GlobalPosition = hasSelectedPuckPosition ? nextPuckPosition : puckStartPosition;
 		puckScript = puck.GetNode<PuckScript>("CharacterBody2D");
 		puckScript.SetGlobal(this);
 		forceBar.SetPuck(puckScript);

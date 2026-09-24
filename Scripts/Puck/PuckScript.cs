@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 
 public partial class PuckScript : RigidBody2D
 {
@@ -7,12 +8,22 @@ public partial class PuckScript : RigidBody2D
 	Random random = new Random();
 	public int minForce = 100;
 	public int maxForce = 2500;
+	public string[] color = {"White", "Red", "Blue", "Green", "Purple", "Bronze", "Silver", "Gold", "Rainbow"};
+	public string[] type = {"Blank", "Striped", "Solid", "Shiny", "Special"};
+	public string[] special = {"None","Bomb", "Magnetic", "Converter"};
+	public string[] rarity = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
+	public int ValueOnExplosion {get; set;}
+	public int Add {get; set;}
+	public float Multiplier {get; set;}
+	public Sprite2D[] sprite;
 	float force {get; set;}
 	float dir;
 	public int forceBuildUp;
 	bool forceHitMax;
 	bool forceApplied;
 	float timeSinceRelease;
+	private readonly HashSet<PointZoneScript> zonesInside = new();
+	private readonly HashSet<StartArea> selectedStartArea = new();
 	public bool Active;
 	public bool puckStopped;
 	private enum State
@@ -27,12 +38,14 @@ public partial class PuckScript : RigidBody2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		LinearDamp = 1.5f;
+		ZIndex = 20;
+		LinearDamp = 2f;
 		forceBuildUp = minForce;
 		Active = true;
 		puckStopped = false;
 		force = 0;
 	}
+
 
 
 
@@ -46,6 +59,21 @@ public partial class PuckScript : RigidBody2D
 		global = globalNode;
 	}
 
+	public void SetInsideZone(PointZoneScript zone, bool inside)
+	{
+		if (inside)
+			zonesInside.Add(zone);
+		else
+			zonesInside.Remove(zone);
+
+		QueueRedraw();
+	}
+
+	public override void _Draw()
+	{
+		if (zonesInside.Count > 0)
+			DrawArc(Vector2.Zero, 50, 0, Mathf.Tau, 64, Color.FromHsv(0, 1, 1, 0.2f), 6);
+	}
 	public void SetForceAndDirection(float newForce, float newDir)
 	{
 		LinearDamp = (float)random.NextDouble() * (2.0f - 1.0f) + 1.0f;
@@ -89,6 +117,7 @@ public partial class PuckScript : RigidBody2D
 
 	public void Release()
 	{
+		global?.OnPuckReleased();
 		dir = GlobalPosition.DirectionTo(GetGlobalMousePosition()).Angle();
 		SetForceAndDirection(forceBuildUp, dir);
 	}
@@ -103,6 +132,8 @@ public partial class PuckScript : RigidBody2D
 		GD.Print("Active: " + Active);
 		global?.CheckForPucks();
 	}
+
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{

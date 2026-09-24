@@ -4,8 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://bnjp310661xbq" path="res://Scenes/Puck.tscn" id="1_n5fxg"]
 [ext_resource type="PackedScene" uid="uid://bpuay13o7hfj6" path="res://Scenes/arrow.tscn" id="2_tgp7m"]
 [ext_resource type="PackedScene" uid="uid://dh8oig16byb4c" path="res://Scenes/in_game_ui.tscn" id="3_tlm6c"]
+[ext_resource type="PackedScene" uid="uid://doqhgjp35tf6t" path="res://Scenes/point_zone.tscn" id="5_5svey"]
+[ext_resource type="Script" uid="uid://c3pcys2tuvuj0" path="res://Scripts/States/StateGame.cs" id="6_tkth4"]
+[ext_resource type="Script" uid="uid://byfbmca08llxv" path="res://Scripts/States/HandleGameStates.cs" id="7_xi5gm"]
+[ext_resource type="PackedScene" uid="uid://bnu6brlek1tyh" path="res://Scenes/Wall.tscn" id="8_xi5gm"]
+[ext_resource type="PackedScene" uid="uid://418vqclmfahn" path="res://Scenes/start_area.tscn" id="9_f0w14"]
 
-[node name="Node2D" type="Node2D" unique_id=1606075846 node_paths=PackedStringArray("puckScript", "arrow", "forceBar")]
+[node name="Global" type="Node2D" unique_id=1606075846 node_paths=PackedStringArray("puckScript", "arrow", "forceBar")]
 script = ExtResource("1_gv34k")
 puckScript = NodePath("Puck/CharacterBody2D")
 arrow = NodePath("Puck/Arrow")
@@ -20,10 +25,72 @@ global = NodePath("../..")
 [node name="Arrow" parent="Puck" unique_id=909023424 instance=ExtResource("2_tgp7m")]
 
 [node name="In-game-UI" parent="." unique_id=1290719452 instance=ExtResource("3_tlm6c")]
-offset_left = 1011.0
-offset_top = 1080.0
-offset_right = 1011.0
-offset_bottom = 1080.0
+
+[node name="HBoxContainer" parent="In-game-UI" index="0" unique_id=1114701635]
+offset_left = 794.0
+offset_top = 875.0
+offset_right = 1294.0
+offset_bottom = 1075.0
+
+[node name="Point Zone" parent="." unique_id=2029377526 instance=ExtResource("5_5svey")]
+position = Vector2(200, 171)
+color = Color(0.67058825, 0.9019608, 0.69803923, 1)
+
+[node name="Point Zone2" parent="." unique_id=1701184254 instance=ExtResource("5_5svey")]
+position = Vector2(1608, 274)
+scale = Vector2(1.4355026, 1.3733171)
+color = Color(0.12116959, 0.22251526, 0.2826571, 1)
+
+[node name="STATE_GAME" type="Node2D" parent="." unique_id=35475637]
+script = ExtResource("6_tkth4")
+
+[node name="HandleGameStates" type="Node2D" parent="STATE_GAME" unique_id=1639908111]
+script = ExtResource("7_xi5gm")
+
+[node name="Wall" parent="." unique_id=1736151432 instance=ExtResource("8_xi5gm")]
+position = Vector2(961, 1063)
+scale = Vector2(66.97019, 1)
+
+[node name="Wall2" parent="." unique_id=2041248355 instance=ExtResource("8_xi5gm")]
+position = Vector2(961, 0)
+scale = Vector2(67.770195, 1)
+
+[node name="Wall3" parent="." unique_id=1704928681 instance=ExtResource("8_xi5gm")]
+position = Vector2(1914, 533)
+rotation = 1.5707964
+scale = Vector2(42.51, 0.666)
+
+[node name="Wall4" parent="." unique_id=1104895303 instance=ExtResource("8_xi5gm")]
+position = Vector2(4, 533)
+rotation = 1.5707964
+scale = Vector2(42.51, 0.666)
+
+[node name="Wall5" parent="." unique_id=813241396 instance=ExtResource("8_xi5gm")]
+position = Vector2(347, 441)
+rotation = 0.5235988
+scale = Vector2(0.44000268, 18.600002)
+
+[node name="Wall6" parent="." unique_id=2081815922 instance=ExtResource("8_xi5gm")]
+position = Vector2(1612, 269.00003)
+rotation = 2.3820977
+scale = Vector2(0.44000268, 18.600002)
+
+[node name="Starting Areas" type="Node2D" parent="." unique_id=1827041203]
+
+[node name="StartArea" parent="Starting Areas" unique_id=317594134 instance=ExtResource("9_f0w14")]
+position = Vector2(394, 850)
+
+[node name="StartArea2" parent="Starting Areas" unique_id=1473939639 instance=ExtResource("9_f0w14")]
+position = Vector2(708, 850)
+
+[node name="StartArea3" parent="Starting Areas" unique_id=1893845135 instance=ExtResource("9_f0w14")]
+position = Vector2(1011, 850)
+
+[node name="StartArea4" parent="Starting Areas" unique_id=703878250 instance=ExtResource("9_f0w14")]
+position = Vector2(1294, 850)
+
+[node name="StartArea5" parent="Starting Areas" unique_id=1357654914 instance=ExtResource("9_f0w14")]
+position = Vector2(1609, 850)
 
 [editable path="Puck"]
 [editable path="In-game-UI"]

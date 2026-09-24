@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://cvlfl60exhsfc"]
+
+[ext_resource type="Script" uid="uid://byaqr6p4y1olq" path="res://Scripts/Walls/MoveableWall.cs" id="1_407uj"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5c0ic"]
+
+[sub_resource type="Gradient" id="Gradient_407uj"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_xi5gm"]
+gradient = SubResource("Gradient_407uj")
+width = 10
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ond42"]
+size = Vector2(10, 2)
+
+[node name="Moveable Wall" type="Node2D" unique_id=1273757000]
+script = ExtResource("1_407uj")
+
+[node name="RigidBody2D" type="RigidBody2D" parent="." unique_id=951604122]
+physics_material_override = SubResource("PhysicsMaterial_5c0ic")
+gravity_scale = 0.0
+
+[node name="Sprite2D" type="Sprite2D" parent="RigidBody2D" unique_id=1673612130]
+self_modulate = Color(0.23137255, 1, 1, 1)
+scale = Vector2(10, 10.05)
+texture = SubResource("GradientTexture1D_xi5gm")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RigidBody2D" unique_id=1038373177]
+z_index = 1
+scale = Vector2(10, 4.8)
+shape = SubResource("RectangleShape2D_ond42")
+debug_color = Color(0.66121835, 0.47578233, 0.53402907, 0.41960785)
