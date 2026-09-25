@@ -15,7 +15,7 @@ public partial class PuckScript : RigidBody2D
 	public int ValueOnExplosion {get; set;}
 	public int Add {get; set;}
 	public float Multiplier {get; set;}
-	public Sprite2D[] sprite;
+	private Sprite2D sprite;
 	float force {get; set;}
 	float dir;
 	public int forceBuildUp;
@@ -26,6 +26,17 @@ public partial class PuckScript : RigidBody2D
 	private readonly HashSet<StartArea> selectedStartArea = new();
 	public bool Active;
 	public bool puckStopped;
+	private AudioStreamPlayer2D shootSFX;
+	private AudioStreamPlayer2D inZoneSFX;
+
+	private enum SoundEffect
+	{
+		Shoot,
+		Bounce,
+		InZone
+	}
+
+
 	private enum State
 	{
 		Idle,
@@ -38,6 +49,9 @@ public partial class PuckScript : RigidBody2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		shootSFX = GetNode<AudioStreamPlayer2D>("ShootSFX");
+		inZoneSFX = GetNode<AudioStreamPlayer2D>("InZoneSFX");
+		sprite = GetNode<Sprite2D>("Sprite2D");
 		ZIndex = 20;
 		LinearDamp = 2f;
 		forceBuildUp = minForce;
@@ -62,17 +76,15 @@ public partial class PuckScript : RigidBody2D
 	public void SetInsideZone(PointZoneScript zone, bool inside)
 	{
 		if (inside)
+		{
 			zonesInside.Add(zone);
+			inZoneSFX.Play();
+
+		}
 		else
+		{
 			zonesInside.Remove(zone);
-
-		QueueRedraw();
-	}
-
-	public override void _Draw()
-	{
-		if (zonesInside.Count > 0)
-			DrawArc(Vector2.Zero, 50, 0, Mathf.Tau, 64, Color.FromHsv(0, 1, 1, 0.2f), 6);
+		}
 	}
 	public void SetForceAndDirection(float newForce, float newDir)
 	{
@@ -120,6 +132,7 @@ public partial class PuckScript : RigidBody2D
 		global?.OnPuckReleased();
 		dir = GlobalPosition.DirectionTo(GetGlobalMousePosition()).Angle();
 		SetForceAndDirection(forceBuildUp, dir);
+		shootSFX.Play();
 	}
 
 	public void OnPuckStop()

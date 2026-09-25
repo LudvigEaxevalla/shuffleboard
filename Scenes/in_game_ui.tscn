@@ -2,6 +2,24 @@
 
 [ext_resource type="Script" uid="uid://ceyoo700tdhvj" path="res://Scripts/ForceBar.cs" id="1_5x6se"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_orthm"]
+bg_color = Color(0, 0.636649, 0.95190185, 1)
+border_color = Color(0.58431375, 0.4509804, 0.6784314, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_size = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dwyif"]
+bg_color = Color(0.8627451, 0, 0, 0.37254903)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+shadow_size = 2
+
 [node name="In-game-UI" type="Control" unique_id=1290719452]
 layout_mode = 3
 anchors_preset = 15
@@ -26,6 +44,8 @@ custom_minimum_size = Vector2(500, 20)
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
+theme_override_constants/outline_size = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_orthm")
+theme_override_styles/fill = SubResource("StyleBoxFlat_dwyif")
 value = 100.0
-show_percentage = false
 script = ExtResource("1_5x6se")

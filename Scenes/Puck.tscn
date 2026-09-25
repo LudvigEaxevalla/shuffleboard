@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://cisa5rql08ojw" path="res://Scripts/Puck/PuckScript.cs" id="1_kf2af"]
 [ext_resource type="Texture2D" uid="uid://8s8t01al6la8" path="res://Assets/Sprites/Pucks/wheel.svg" id="2_kf2af"]
+[ext_resource type="AudioStream" uid="uid://dkwctxnw8ojp2" path="res://Assets/Audio/SFX/punch.wav" id="3_d472w"]
+[ext_resource type="AudioStream" uid="uid://ditujqiwv180f" path="res://Assets/Audio/SFX/blip_2.wav" id="4_tf2oo"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_gv34k"]
 bounce = 1.0
@@ -25,3 +27,13 @@ texture = ExtResource("2_kf2af")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=169472269]
 scale = Vector2(3.765, 3.765)
 shape = SubResource("CircleShape2D_ond42")
+
+[node name="ShootSFX" type="AudioStreamPlayer2D" parent="CharacterBody2D" unique_id=1630493069]
+stream = ExtResource("3_d472w")
+
+[node name="BounceSFX" type="AudioStreamPlayer2D" parent="CharacterBody2D" unique_id=743568941]
+stream = ExtResource("3_d472w")
+pitch_scale = 0.55
+
+[node name="InZoneSFX" type="AudioStreamPlayer2D" parent="CharacterBody2D" unique_id=1054008111]
+stream = ExtResource("4_tf2oo")

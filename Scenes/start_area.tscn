@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" uid="uid://4djq0ex8yldg" path="res://Scripts/StartArea.cs" id="1_bgc5k"]
 [ext_resource type="Texture2D" uid="uid://4ewu5nply0r" path="res://Assets/Sprites/Ground/zone_placeholder.svg" id="1_o40am"]
+[ext_resource type="AudioStream" uid="uid://7rm5lv666kgv" path="res://Assets/Audio/SFX/placeconveyor_1.wav" id="3_yno3g"]
+[ext_resource type="AudioStream" uid="uid://gbfsxpkc85dq" path="res://Assets/Audio/SFX/placeconveyor_2.wav" id="4_e8spn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ond42"]
 size = Vector2(78, 83)
@@ -16,3 +18,9 @@ shape = SubResource("RectangleShape2D_ond42")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2090464368]
 texture = ExtResource("1_o40am")
+
+[node name="HoverSFX" type="AudioStreamPlayer2D" parent="." unique_id=697034155]
+stream = ExtResource("3_yno3g")
+
+[node name="SelectSFX" type="AudioStreamPlayer2D" parent="." unique_id=629019143]
+stream = ExtResource("4_e8spn")
