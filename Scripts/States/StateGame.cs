@@ -19,10 +19,18 @@ public partial class StateGame : Node2D
 	private float scoreCountElapsed;
 	private float scoreCountStart;
 	private float scoreCountTarget;
+	private int lastPlayedScorePoint;
+	private int countingPuckSfxPlays;
+	private int countingZoneSfxPlays;
 	private PuckScript pendingZonePuck;
 	private PointZoneScript pendingZone;
+	private AudioStreamPlayer2D AddingPointsSFX;
+	private AudioStreamPlayer2D CountingPuckSFX;
+	private AudioStreamPlayer2D CountingZoneSFX;
 	private const int MovesPerRound = 4;
 	private const float ScoreCountDuration = 1.5f;
+	private const float ScorePitchStep = 0.025f;
+	private const float MaxScorePitch = 1.8f;
 
 	private enum GamePlayStage
 	{
@@ -42,6 +50,9 @@ public partial class StateGame : Node2D
 	{
 		totalRounds = rounds;
 		global = GetTree().CurrentScene as Global;
+		AddingPointsSFX = GetNode<AudioStreamPlayer2D>("AddingPointsSFX");
+		CountingPuckSFX = GetNode<AudioStreamPlayer2D>("CountingPuck");
+		CountingZoneSFX = GetNode<AudioStreamPlayer2D>("CountingZone");
 	}
 
 	public int GetNextProjectileIdentifier()
@@ -111,6 +122,9 @@ public partial class StateGame : Node2D
 		{
 			if (pendingZone.TryAddZoneScore(pendingZonePuck))
 			{
+				countingZoneSfxPlays++;
+				CountingZoneSFX.PitchScale = Mathf.Min(1f + countingZoneSfxPlays * ScorePitchStep, MaxScorePitch);
+				CountingZoneSFX.Play();
 				global.SetStatus($"Puck {nextPuckToCount}/{pucksToCount.Count} | Zone +{pendingZone.ZonePointsPerPuck:0.##}", true);
 			}
 
@@ -131,6 +145,9 @@ public partial class StateGame : Node2D
 			{
 				var puckPoints = puck.puckValue * puck.Multiplier;
 				puck.ShowScoreBreakdown();
+				countingPuckSfxPlays++;
+				CountingPuckSFX.PitchScale = Mathf.Min(1f + countingPuckSfxPlays * ScorePitchStep, MaxScorePitch);
+				CountingPuckSFX.Play();
 				temporaryPoints += puckPoints;
 				pendingZonePuck = puck;
 				pendingZone = scoringZone;
@@ -161,6 +178,7 @@ public partial class StateGame : Node2D
 		}
 
 		scoreCountElapsed = 0;
+		lastPlayedScorePoint = Mathf.FloorToInt(scoreCountStart);
 		currentGPS = GamePlayStage.ScoreCountUp;
 		global.SetStatus($"Round {RoundDisplay} counted | Adding score", true);
 	}
@@ -170,7 +188,17 @@ public partial class StateGame : Node2D
 		scoreCountElapsed += delta;
 		var progress = Mathf.Clamp(scoreCountElapsed / ScoreCountDuration, 0f, 1f);
 		var easedProgress = 1f - Mathf.Pow(1f - progress, 3f);
-		global.SetScore(Mathf.Lerp(scoreCountStart, scoreCountTarget, easedProgress));
+		var displayedScore = Mathf.Lerp(scoreCountStart, scoreCountTarget, easedProgress);
+		global.SetScore(displayedScore);
+
+		var countedScore = Mathf.FloorToInt(displayedScore);
+		while (lastPlayedScorePoint < countedScore)
+		{
+			lastPlayedScorePoint++;
+			var pointsCounted = lastPlayedScorePoint - Mathf.FloorToInt(scoreCountStart);
+			AddingPointsSFX.PitchScale = Mathf.Min(1f + pointsCounted * ScorePitchStep, MaxScorePitch);
+			AddingPointsSFX.Play();
+		}
 
 		if (progress >= 1f)
 		{

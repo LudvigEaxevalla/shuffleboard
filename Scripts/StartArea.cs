@@ -11,6 +11,8 @@ public partial class StartArea : Area2D
 	private Sprite2D sprite;
 	private AudioStreamPlayer2D hoverSFX;
 	private AudioStreamPlayer2D selectSFX;	
+	private bool mouseHighlighted;
+	private bool controllerFocused;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -37,13 +39,8 @@ public partial class StartArea : Area2D
 		if (!avalible)
 			return;
 
-		highLighted = true;
-		hoverSFX.Play();
-		SetAlpha(Mathf.Min(1.0f, alpha + 0.4f));
-		QueueRedraw();
-		Vector2 size = new Vector2(1.2f, 1.2f);
-		float duration = 0.2f;
-		TweenEffect(size, duration);
+		mouseHighlighted = true;
+		RefreshHighlight(true);
 
 	}
 
@@ -63,6 +60,9 @@ public partial class StartArea : Area2D
 	{
 		avalible = value;
 		selected = false;
+		mouseHighlighted = false;
+		controllerFocused = false;
+		highLighted = false;
 		SetAlpha(value ? alpha : alpha * 0.4f);
 		QueueRedraw();
 	}
@@ -72,12 +72,28 @@ public partial class StartArea : Area2D
 		if (!avalible)
 			return;
 
-		highLighted = false;
-		SetAlpha(alpha);
+		mouseHighlighted = false;
+		RefreshHighlight(false);
+	}
+
+	public void SetControllerFocused(bool focused)
+	{
+		if (!avalible)
+			return;
+
+		controllerFocused = focused;
+		RefreshHighlight(focused);
+	}
+
+	private void RefreshHighlight(bool playHoverSound)
+	{
+		highLighted = avalible && (mouseHighlighted || controllerFocused);
+		SetAlpha(highLighted ? Mathf.Min(1.0f, alpha + 0.4f) : alpha);
 		QueueRedraw();
-		Vector2 size = new Vector2(1f , 1f);
-		float duration = 0.2f;
-		TweenEffect(size, duration);
+		var size = highLighted ? new Vector2(1.2f, 1.2f) : Vector2.One;
+		TweenEffect(size, 0.2f);
+		if (playHoverSound && highLighted)
+			hoverSFX.Play();
 	}
 
 	private void SetAlpha(float value)
@@ -89,7 +105,7 @@ public partial class StartArea : Area2D
 
 	public override void _InputEvent(Viewport viewport, InputEvent @event, int shapeIdx)
 	{
-		if (!highLighted || !@event.IsActionPressed("left_click"))
+		if (!highLighted || !@event.IsActionPressed("select_area"))
 			return;
 
 		SelectArea();

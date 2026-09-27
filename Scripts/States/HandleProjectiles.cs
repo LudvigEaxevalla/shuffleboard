@@ -49,7 +49,7 @@ public partial class HandleProjectiles : Node2D
         switch (currentState)
         {
             case State.Idle:
-                if (projectile.CanBeLaunched && Input.IsActionJustPressed("ui_select"))
+                if (projectile.CanBeLaunched && Input.IsActionJustPressed("build_up"))
                 {
                     ForceBuildUp = projectile.MinProjectileForce;
                     forceHitMax = false;
@@ -57,11 +57,11 @@ public partial class HandleProjectiles : Node2D
                 }
                 break;
             case State.BuildingForce:
-                if (Input.IsActionPressed("ui_select"))
+                if (Input.IsActionPressed("build_up"))
                 {
                     BuildForce();
                 }
-                else if (Input.IsActionJustReleased("ui_select"))
+                else if (Input.IsActionJustReleased("build_up"))
                 {
                     Release();
                     currentState = State.Released;
@@ -111,7 +111,8 @@ public partial class HandleProjectiles : Node2D
     private void Release()
     {
         var body = projectile.PhysicsBody;
-        var direction = body.GlobalPosition.DirectionTo(body.GetGlobalMousePosition()).Angle();
+        var arrow = body.GetNode<Arrow>("../Arrow");
+        var direction = Vector2.FromAngle(arrow.GlobalRotation);
         if (projectile.identifier == null)
         {
             projectile.identifier = new[] { stateGame.GetNextProjectileIdentifier() };
@@ -120,7 +121,7 @@ public partial class HandleProjectiles : Node2D
         projectile.OnProjectileReleased();
         timeSinceRelease = 0;
         body.ApplyCentralImpulse(new Vector2(
-            ForceBuildUp * MathF.Cos(direction),
-            ForceBuildUp * MathF.Sin(direction)));
+            ForceBuildUp * direction.X,
+            ForceBuildUp * direction.Y));
     }
 }

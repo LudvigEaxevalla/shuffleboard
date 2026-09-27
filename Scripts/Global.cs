@@ -25,6 +25,7 @@ public partial class Global : Node2D
 	private bool hasSelectedPuckPosition;
 	private readonly List<Node2D> puckRoots = new();
 	private StateGame stateGame;
+	private StartArea focusedStartArea;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -97,6 +98,34 @@ public partial class Global : Node2D
 		puckScript.Sleeping = true;
 		puckScript.SetShootable(true);
 		stateGame.OnStartPositionSelected();
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		if (stateGame == null || !stateGame.CanChooseStartPosition || @event is not InputEventJoypadButton joypadButton || !joypadButton.Pressed)
+			return;
+
+		var direction = joypadButton.ButtonIndex switch
+		{
+			JoyButton.DpadLeft => Vector2.Left,
+			JoyButton.DpadRight => Vector2.Right,
+			JoyButton.DpadUp => Vector2.Up,
+			JoyButton.DpadDown => Vector2.Down,
+			_ => Vector2.Zero
+		};
+
+		if (direction != Vector2.Zero)
+		{
+			NavigateStartArea(direction);
+			GetViewport().SetInputAsHandled();
+			return;
+		}
+
+		if (@event.IsActionPressed("select_area") && focusedStartArea != null && focusedStartArea.avalible)
+		{
+			focusedStartArea.SelectArea();
+			GetViewport().SetInputAsHandled();
+		}
 	}
 
 	public void OnPuckReleased()
@@ -184,12 +213,69 @@ public partial class Global : Node2D
 
 	private void SetStartAreasAvailable(bool available)
 	{
+		focusedStartArea?.SetControllerFocused(false);
+		focusedStartArea = null;
 		foreach (Node child in GetNode<Node2D>("Starting Areas").GetChildren())
 		{
 			if (child is StartArea startArea)
 				startArea.SetAvailable(available);
 		}
 
+		if (!available)
+			return;
+
+		var focusPosition = puckScript != null ? puckScript.GlobalPosition : puckStartPosition;
+		var nearestDistanceSquared = float.MaxValue;
+		foreach (Node child in GetNode<Node2D>("Starting Areas").GetChildren())
+		{
+			if (child is not StartArea startArea || !startArea.avalible)
+				continue;
+
+			var distanceSquared = focusPosition.DistanceSquaredTo(startArea.GlobalPosition);
+			if (distanceSquared < nearestDistanceSquared)
+			{
+				nearestDistanceSquared = distanceSquared;
+				focusedStartArea = startArea;
+			}
+		}
+
+		focusedStartArea?.SetControllerFocused(true);
+	}
+
+	private void NavigateStartArea(Vector2 direction)
+	{
+		if (focusedStartArea == null || !focusedStartArea.avalible)
+			return;
+
+		StartArea nextArea = null;
+		var bestAlignment = -1f;
+		var bestDistanceSquared = float.MaxValue;
+		foreach (Node child in GetNode<Node2D>("Starting Areas").GetChildren())
+		{
+			if (child is not StartArea candidate || !candidate.avalible || candidate == focusedStartArea)
+				continue;
+
+			var offset = candidate.GlobalPosition - focusedStartArea.GlobalPosition;
+			var forwardDistance = offset.Dot(direction);
+			if (forwardDistance <= 0f)
+				continue;
+
+			var distanceSquared = offset.LengthSquared();
+			var alignment = forwardDistance / Mathf.Sqrt(distanceSquared);
+			if (alignment > bestAlignment || (Mathf.IsEqualApprox(alignment, bestAlignment) && distanceSquared < bestDistanceSquared))
+			{
+				bestAlignment = alignment;
+				bestDistanceSquared = distanceSquared;
+				nextArea = candidate;
+			}
+		}
+
+		if (nextArea == null)
+			return;
+
+		focusedStartArea.SetControllerFocused(false);
+		focusedStartArea = nextArea;
+		focusedStartArea.SetControllerFocused(true);
 	}
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)

@@ -12,8 +12,11 @@ public partial class Arrow : Node2D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		Rotation = GlobalPosition.DirectionTo(GetGlobalMousePosition()).Angle();
-		if (Input.IsActionJustReleased("ui_select"))
+		var controllerAim = Input.GetVector("aim_left", "aim_right", "aim_up", "aim_down");
+		Rotation = controllerAim.LengthSquared() > 0.01f
+			? controllerAim.Angle()
+			: GlobalPosition.DirectionTo(GetGlobalMousePosition()).Angle();
+		if (Input.IsActionJustReleased("build_up"))
 		{
 			Visible = false;
 		}

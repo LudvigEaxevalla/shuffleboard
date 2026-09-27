@@ -10,6 +10,9 @@
 [ext_resource type="Script" uid="uid://b8xjbqjs57em4" path="res://Scripts/States/HandleProjectiles.cs" id="8_ribvr"]
 [ext_resource type="PackedScene" uid="uid://bnu6brlek1tyh" path="res://Scenes/Wall.tscn" id="8_xi5gm"]
 [ext_resource type="PackedScene" uid="uid://418vqclmfahn" path="res://Scenes/start_area.tscn" id="9_f0w14"]
+[ext_resource type="AudioStream" uid="uid://csg5gfcsnp85l" path="res://Assets/Audio/SFX/placeconveyor_3.wav" id="9_qgca0"]
+[ext_resource type="AudioStream" uid="uid://bqcia64frx016" path="res://Assets/Audio/SFX/placehouse.wav" id="10_boulm"]
+[ext_resource type="AudioStream" uid="uid://ga4o5a6h08ww" path="res://Assets/Audio/SFX/placemixer.wav" id="11_auhwm"]
 
 [node name="Global" type="Node2D" unique_id=1606075846 node_paths=PackedStringArray("puckScript", "arrow", "forceBar")]
 script = ExtResource("1_gv34k")
@@ -84,6 +87,15 @@ script = ExtResource("7_xi5gm")
 
 [node name="HandleProjectiles" type="Node2D" parent="STATE_GAME" unique_id=1447468348]
 script = ExtResource("8_ribvr")
+
+[node name="AddingPointsSFX" type="AudioStreamPlayer2D" parent="STATE_GAME" unique_id=1871235273]
+stream = ExtResource("9_qgca0")
+
+[node name="CountingPuck" type="AudioStreamPlayer2D" parent="STATE_GAME" unique_id=292376727]
+stream = ExtResource("10_boulm")
+
+[node name="CountingZone" type="AudioStreamPlayer2D" parent="STATE_GAME" unique_id=508921084]
+stream = ExtResource("11_auhwm")
 
 [node name="Wall" parent="." unique_id=1736151432 instance=ExtResource("8_xi5gm")]
 position = Vector2(961, 1063)
