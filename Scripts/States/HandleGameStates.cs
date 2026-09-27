@@ -6,9 +6,11 @@ public partial class HandleGameStates : Node2D
 	public bool playerCanChoosePuck = false;
 	public bool playerCanShoot = false;
 	public bool outOfMoves = false;
+	private StateGame stateGame;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		stateGame = GetTree().CurrentScene as StateGame;
 	}
 
 	public void HandlePlayerDecision()
