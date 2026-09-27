@@ -119,7 +119,7 @@ public partial class Global : Node2D
 		arrow.Reparent(puckRoot, false);
 		arrow.Visible = true;
 		SetStartAreasAvailable(true);
-		SetStatus($"Round {stateGame.RoundDisplay} | Choose a start position | Hands: {stateGame.hand}");
+		SetStatus($"Round {stateGame.RoundDisplay} | Choose a start position | Moves: {stateGame.moves}");
 		GD.Print("Added new puck at " + puckRoot.GlobalPosition);
 		GD.Print("Pucks used: " + pucks);
 		GD.Print("Pucks remaining: " + pucksRemaining);

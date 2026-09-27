@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public partial class PuckScript : RigidBody2D, IProjectile
 {
+	private void UpdateTravelValueColor()
+	{
+		travelValueLabel.AddThemeColorOverride("font_color", zonesInside.Count > 0 ? Colors.Green : Colors.Red);
+	}
 	[Export] Global global;
 	Random random = new Random();
 	public int minForce = 100;
@@ -103,7 +107,7 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	{
 		var currentPosition = GlobalPosition;
 		if (travelValueLabel.Visible)
-			travelValueLabel.GlobalPosition = currentPosition + new Vector2(-90, -18);
+			travelValueLabel.GlobalPosition = ClampLabelPosition(travelValueLabel, currentPosition + new Vector2(-90, -18));
 
 		if (!trackingTravelDistance)
 			return;
@@ -124,7 +128,7 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	{
 		puckValue = 5;
 		basePuckValue = puckValue;
-		Multiplier = 2;
+		Multiplier = 1;
 	}
 	public void SetShootable(bool value)
 	{
@@ -144,7 +148,8 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	public void ShowScoreBreakdown()
 	{
 		scoreBreakdownLabel.Text = $"{puckValue * Multiplier:0.##}";
-		var startPosition = GlobalPosition + new Vector2(-90, -65);
+		var startPosition = ClampLabelPosition(scoreBreakdownLabel, GlobalPosition + new Vector2(-90, -65));
+		var targetPosition = ClampLabelPosition(scoreBreakdownLabel, startPosition + new Vector2(0, -28));
 		scoreBreakdownLabel.GlobalPosition = startPosition;
 		scoreBreakdownLabel.Visible = true;
 		scoreBreakdownLabel.Scale = new Vector2(0.7f, 0.7f);
@@ -153,7 +158,7 @@ public partial class PuckScript : RigidBody2D, IProjectile
 		tween.SetTrans(Tween.TransitionType.Bounce);
 		tween.SetEase(Tween.EaseType.Out);
 		tween.TweenProperty(scoreBreakdownLabel, "scale", Vector2.One, 0.25f);
-		tween.Parallel().TweenProperty(scoreBreakdownLabel, "global_position", startPosition + new Vector2(0, -28), 0.35f);
+		tween.Parallel().TweenProperty(scoreBreakdownLabel, "global_position", targetPosition, 0.35f);
 	}
 
 	private static void ConfigureScoreLabel(Label label)
@@ -164,12 +169,25 @@ public partial class PuckScript : RigidBody2D, IProjectile
 		label.AddThemeFontSizeOverride("font_size", 20);
 	}
 
+	private Vector2 ClampLabelPosition(Label label, Vector2 position)
+	{
+		const float margin = 8;
+		var viewport = GetViewportRect();
+		var minX = viewport.Position.X + margin;
+		var minY = viewport.Position.Y + margin;
+		var maxX = Mathf.Max(minX, viewport.End.X - label.Size.X - margin);
+		var maxY = Mathf.Max(minY, viewport.End.Y - label.Size.Y - margin);
+		return new Vector2(Mathf.Clamp(position.X, minX, maxX), Mathf.Clamp(position.Y, minY, maxY));
+	}
+
 	private void UpdateTravelValueLabel()
 	{
 		travelValueLabel.Text = puckValue.ToString();
-		travelValueLabel.GlobalPosition = GlobalPosition + new Vector2(-90, -18);
+		travelValueLabel.GlobalPosition = ClampLabelPosition(travelValueLabel, GlobalPosition + new Vector2(-90, -18));
 		travelValueLabel.Visible = true;
 		travelValueLabel.Scale = new Vector2(0.7f, 0.7f);
+
+		UpdateTravelValueColor();
 
 		if (travelValueTween != null && travelValueTween.IsRunning())
 			travelValueTween.Kill();
@@ -205,6 +223,8 @@ public partial class PuckScript : RigidBody2D, IProjectile
 		{
 			zonesInside.Remove(zone);
 		}
+
+		UpdateTravelValueColor();
 	}
 	void IProjectile.OnProjectileReleased()
 	{

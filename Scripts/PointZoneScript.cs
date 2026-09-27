@@ -5,15 +5,23 @@ using System.Collections.Generic;
 public partial class PointZoneScript : Area2D
 {
 	[Export]
-	int zoneValue {get; set;}
-	[Export]
 	float zoneMultiplier {get; set;}
 	[Export] 
 	Color color;
 	private readonly HashSet<PuckScript> pucksInside = new();
 	private readonly HashSet<PuckScript> pucksScored = new();
 	public int PuckCount => pucksInside.Count;
-	public float ZonePointsPerPuck => zoneValue * zoneMultiplier;
+	public float ZoneValue
+	{
+		get
+		{
+			float totalValue = PuckCount * 10;
+			foreach (var puck in pucksInside)
+				totalValue += puck.puckValue;
+			return totalValue;
+		}
+	}
+	public float ZonePointsPerPuck => ZoneValue * zoneMultiplier;
 	private StateGame stateGame;
 	Sprite2D sprite;
 	float currentSize;
@@ -34,6 +42,10 @@ public partial class PointZoneScript : Area2D
 			Visible = false,
 			MouseFilter = Control.MouseFilterEnum.Ignore
 		};
+		scoreBreakdownLabel.Size = new Vector2(
+			Mathf.Max(1f, Mathf.Min(620f, GetViewportRect().Size.X - 16f)),
+			64f);
+		scoreBreakdownLabel.AutowrapMode = TextServer.AutowrapMode.Word;
 		scoreBreakdownLabel.AddThemeColorOverride("font_color", Colors.White);
 		scoreBreakdownLabel.AddThemeColorOverride("font_outline_color", Colors.Black);
 		scoreBreakdownLabel.AddThemeConstantOverride("outline_size", 6);
@@ -77,9 +89,10 @@ public partial class PointZoneScript : Area2D
 
 	private void ShowScoreBreakdown()
 	{
-		var pointsPerPuck = zoneValue * zoneMultiplier;
-		scoreBreakdownLabel.Text = $"{pointsPerPuck:0.##}  {pucksScored.Count} pucks | +{pointsPerPuck * pucksScored.Count:0.##} x {zoneMultiplier:0.##}";
-		var startPosition = GlobalPosition + new Vector2(-100, -70);
+		var pointsPerPuck = ZonePointsPerPuck;
+		scoreBreakdownLabel.Text = $"{ZoneValue:0.##} x {zoneMultiplier:0.##} | {pucksScored.Count} pucks | +{pointsPerPuck * pucksScored.Count:0.##}";
+		var startPosition = ClampLabelPosition(GlobalPosition + new Vector2(-100, -70));
+		var targetPosition = ClampLabelPosition(startPosition + new Vector2(0, -28));
 		scoreBreakdownLabel.GlobalPosition = startPosition;
 		scoreBreakdownLabel.Visible = true;
 		scoreBreakdownLabel.Scale = new Vector2(0.7f, 0.7f);
@@ -91,7 +104,18 @@ public partial class PointZoneScript : Area2D
 		scoreLabelTween.SetTrans(Tween.TransitionType.Bounce);
 		scoreLabelTween.SetEase(Tween.EaseType.Out);
 		scoreLabelTween.TweenProperty(scoreBreakdownLabel, "scale", Vector2.One, 0.25f);
-		scoreLabelTween.Parallel().TweenProperty(scoreBreakdownLabel, "global_position", startPosition + new Vector2(0, -28), 0.35f);
+		scoreLabelTween.Parallel().TweenProperty(scoreBreakdownLabel, "global_position", targetPosition, 0.35f);
+	}
+
+	private Vector2 ClampLabelPosition(Vector2 position)
+	{
+		const float margin = 8;
+		var viewport = GetViewportRect();
+		var minX = viewport.Position.X + margin;
+		var minY = viewport.Position.Y + margin;
+		var maxX = Mathf.Max(minX, viewport.End.X - scoreBreakdownLabel.Size.X - margin);
+		var maxY = Mathf.Max(minY, viewport.End.Y - scoreBreakdownLabel.Size.Y - margin);
+		return new Vector2(Mathf.Clamp(position.X, minX, maxX), Mathf.Clamp(position.Y, minY, maxY));
 	}
 
 	public void OnBodyExited(Node2D body)

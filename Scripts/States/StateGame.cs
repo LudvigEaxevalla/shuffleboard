@@ -9,7 +9,7 @@ public partial class StateGame : Node2D
 	public int discards = 4;
 	public int cash;
 	public int puckPile = 10;
-	public int hand = 4;
+	public int moves = 4;
 	private int nextProjectileIdentifier = 1;
 	private int totalRounds;
 	private Global global;
@@ -21,7 +21,7 @@ public partial class StateGame : Node2D
 	private float scoreCountTarget;
 	private PuckScript pendingZonePuck;
 	private PointZoneScript pendingZone;
-	private const int HandsPerRound = 4;
+	private const int MovesPerRound = 4;
 	private const float ScoreCountDuration = 1.5f;
 
 	private enum GamePlayStage
@@ -54,7 +54,7 @@ public partial class StateGame : Node2D
 		if (CanChooseStartPosition)
 		{
 			currentGPS = GamePlayStage.Shoot;
-			global.SetStatus($"Round {RoundDisplay} | Aim and shoot | Hands: {hand}");
+			global.SetStatus($"Round {RoundDisplay} | Aim and shoot | Moves: {moves}");
 		}
 	}
 
@@ -63,11 +63,11 @@ public partial class StateGame : Node2D
 		if (currentGPS != GamePlayStage.Shoot)
 			return;
 
-		if (hand > 0)
-			hand--;
+		if (moves > 0)
+			moves--;
 
-		GD.Print("Hands left: " + hand);
-		if (hand > 0)
+		GD.Print("Moves left: " + moves);
+		if (moves > 0)
 		{
 			currentGPS = GamePlayStage.ChooseStartPosition;
 			global.SpawnNextPuck();
@@ -197,7 +197,7 @@ public partial class StateGame : Node2D
 	private void StartNextRound()
 	{
 		global.ClearBoard();
-		hand = HandsPerRound;
+		moves = MovesPerRound;
 		global.StartNextRound();
 		currentGPS = GamePlayStage.ChooseStartPosition;
 	}
