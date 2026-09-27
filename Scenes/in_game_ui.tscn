@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://dh8oig16byb4c"]
 
 [ext_resource type="Script" uid="uid://ceyoo700tdhvj" path="res://Scripts/ForceBar.cs" id="1_5x6se"]
+[ext_resource type="FontFile" uid="uid://bpw37jrpmvowv" path="res://Assets/Fonts/PlusJakartaSans-VariableFont_wght.ttf" id="1_ey7ub"]
+
+[sub_resource type="Theme" id="Theme_ribvr"]
+default_font = ExtResource("1_ey7ub")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_orthm"]
 bg_color = Color(0, 0.636649, 0.95190185, 1)
@@ -27,6 +31,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = SubResource("Theme_ribvr")
 
 [node name="StatusLabel" type="Label" parent="." unique_id=1528833451]
 z_index = 100
