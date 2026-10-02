@@ -90,7 +90,7 @@ public partial class HandleProjectiles : Node2D
     {
         if (forceHitMax)
         {
-            ForceBuildUp -= 5;
+            ForceBuildUp -= 10;
             if (ForceBuildUp <= projectile.MinProjectileForce)
             {
                 ForceBuildUp = projectile.MinProjectileForce;
@@ -99,7 +99,7 @@ public partial class HandleProjectiles : Node2D
         }
         else
         {
-            ForceBuildUp = Math.Max(ForceBuildUp, projectile.MinProjectileForce) + 5;
+            ForceBuildUp = Math.Max(ForceBuildUp, projectile.MinProjectileForce) + 10;
             if (ForceBuildUp >= projectile.MaxProjectileForce)
             {
                 ForceBuildUp = projectile.MaxProjectileForce;

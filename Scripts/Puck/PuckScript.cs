@@ -10,7 +10,7 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	}
 	[Export] Global global;
 	Random random = new Random();
-	public int minForce = 100;
+	public int minForce = 200;
 	public int maxForce = 2500;
 	[Export] public float distancePerValueIncrease = 100f;
 	[Export] public int valueIncreasePerDistanceStep = 1;
@@ -21,6 +21,7 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	public string[] rarity = {"Common", "Uncommon", "Rare", "Epic", "Legendary"};
 	public int ValueOnDeath {get; set;}
 	public int puckValue {get; set;}
+	public int collisionBonus {get; set;}
 	public float Multiplier {get; set;}
 	private Sprite2D sprite;
 	private Vector2 spriteBaseScale;
@@ -98,6 +99,9 @@ public partial class PuckScript : RigidBody2D, IProjectile
 		AddChild(outsideZoneMark);
 		ZIndex = 20;
 		LinearDamp = 2f;
+		ContactMonitor = true;
+		MaxContactsReported = 8;
+		BodyEntered += OnBodyEntered;
 		shootable = false;
 		puckStopped = false;
 		PuckBaseValue();
@@ -128,7 +132,20 @@ public partial class PuckScript : RigidBody2D, IProjectile
 	{
 		puckValue = 5;
 		basePuckValue = puckValue;
+		if (collisionBonus <= 0)
+			collisionBonus = 1;
 		Multiplier = 1;
+	}
+
+	private void OnBodyEntered(Node body)
+	{
+		if (body is not PhysicsBody2D)
+			return;
+
+		basePuckValue += collisionBonus;
+		puckValue += collisionBonus;
+		if (trackingTravelDistance)
+			UpdateTravelValueLabel();
 	}
 	public void SetShootable(bool value)
 	{
